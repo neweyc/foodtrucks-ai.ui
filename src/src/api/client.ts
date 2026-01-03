@@ -206,4 +206,50 @@ export const getOrders = async (truckId: number): Promise<Order[]> => {
   return response.data;
 };
 
+export interface Vendor {
+  id: number;
+  name: string;
+  description: string;
+  phoneNumber: string;
+  website: string;
+  isActive: boolean;
+}
+
+export interface CreateVendorRequest {
+  name: string;
+  description: string;
+  phoneNumber: string;
+  website: string;
+}
+
+export interface UpdateVendorRequest {
+  name: string;
+  description: string;
+  phoneNumber: string;
+  website: string;
+  isActive: boolean;
+}
+
+export const getVendors = async (): Promise<Vendor[]> => {
+  const response = await client.get<Vendor[]>('/api/vendors');
+  return response.data;
+};
+
+export const getVendor = async (id: number): Promise<Vendor> => {
+  const response = await client.get<Vendor>(`/api/vendors/${id}`);
+  return response.data;
+};
+
+export const createVendor = async (request: CreateVendorRequest): Promise<void> => {
+  await client.post('/api/vendors', request);
+};
+
+export const updateVendor = async (id: number, request: UpdateVendorRequest): Promise<void> => {
+  await client.put(`/api/vendors/${id}`, request);
+};
+
+export const deleteVendor = async (id: number): Promise<void> => {
+  await client.delete(`/api/vendors/${id}`);
+};
+
 export default client;

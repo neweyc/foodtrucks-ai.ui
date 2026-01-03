@@ -1,6 +1,9 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import VendorLayout from './layouts/VendorLayout';
 import VendorDashboard from './pages/vendor/VendorDashboard';
+import AdminLayout from './layouts/AdminLayout';
+import AdminDashboard from './pages/admin/AdminDashboard';
+import VendorsPage from './pages/admin/Vendors/VendorsPage';
 
 import LoginPage from './pages/LoginPage';
 
@@ -37,6 +40,13 @@ function App() {
             <Route path="trucks/:truckId/edit" element={<EditTruckPage />} />
             <Route path="trucks/:truckId/menu" element={<TruckMenuPage />} />
             <Route path="orders" element={<VendorOrdersPage />} />
+          </Route>
+
+          {/* Admin Routes */}
+
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route path="dashboard" element={<AdminDashboard />} />
+            <Route path="vendors" element={<VendorsPage />} />
           </Route>
 
           {/* Fallback */}

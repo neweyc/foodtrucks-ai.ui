@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Box, Card, CardContent, Typography, TextField, Button, Alert } from '@mui/material';
-import { login } from '../api/client';
+import { login, getMe } from '../api/client';
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -18,8 +18,13 @@ export default function LoginPage() {
     try {
       const data = await login({ email, password });
       localStorage.setItem('authToken', data.accessToken);
-      // Optional: Store refresh token
-      navigate('/vendor/dashboard');
+      
+      const user = await getMe();
+      if (user.vendorId) {
+        navigate('/vendor/dashboard');
+      } else {
+        navigate('/admin/dashboard');
+      }
     } catch (err: any) {
       console.error(err);
       setError('Invalid email or password.');
