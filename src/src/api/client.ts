@@ -122,6 +122,10 @@ export const addMenuCategory = async (truckId: number, name: string): Promise<vo
   await client.post(`/api/trucks/${truckId}/menu-categories`, { name });
 };
 
+export const deleteMenuCategory = async (truckId: number, categoryId: number): Promise<void> => {
+  await client.delete(`/api/trucks/${truckId}/menu-categories/${categoryId}`);
+};
+
 export interface AddMenuItemSize {
   name: string;
   price: number;

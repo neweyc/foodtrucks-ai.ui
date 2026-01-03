@@ -10,7 +10,7 @@ import AddIcon from '@mui/icons-material/Add';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
-import { getTruck, addMenuCategory, addMenuItem, editMenuItem } from '../../api/client';
+import { getTruck, addMenuCategory, addMenuItem, editMenuItem, deleteMenuCategory } from '../../api/client';
 import type { Truck, AddMenuItemRequest, MenuItem } from '../../api/client';
 
 export default function TruckMenuPage() {
@@ -53,6 +53,19 @@ export default function TruckMenuPage() {
         setCategoryDialogOpen(false);
         setCategoryName('');
         loadTruck();
+    }
+  };
+
+  const handleDeleteCategory = async (categoryId: number) => {
+    if (!truckId) return;
+    if (confirm("Are you sure you want to delete this category? All items in it will also be deleted.")) {
+        try {
+            await deleteMenuCategory(parseInt(truckId), categoryId);
+            loadTruck();
+        } catch (error) {
+            console.error("Failed to delete category:", error);
+            alert("Failed to delete category.");
+        }
     }
   };
 
@@ -183,7 +196,18 @@ export default function TruckMenuPage() {
                 }}
             >
                 <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={{ bgcolor: 'grey.50' }}>
-                    <Typography variant="h6" fontWeight="bold">{category.name}</Typography>
+                    <Box sx={{ display: 'flex', alignItems: 'center', width: '100%', pr: 2 }}>
+                        <Typography variant="h6" fontWeight="bold" sx={{ flexGrow: 1 }}>{category.name}</Typography>
+                        <Box 
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                handleDeleteCategory(category.id);
+                            }}
+                            sx={{ cursor: 'pointer', display: 'flex', alignItems: 'center', color: 'text.secondary', '&:hover': { color: 'error.main' } }}
+                        >
+                            <DeleteIcon />
+                        </Box>
+                    </Box>
                 </AccordionSummary>
                 <AccordionDetails sx={{ p: 0 }}>
                      <List>
