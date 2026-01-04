@@ -18,12 +18,13 @@ interface VendorFormProps {
 }
 
 export default function VendorForm({ initialData, onSubmit, onCancel }: VendorFormProps) {
-  const [formData, setFormData] = useState<UpdateVendorRequest>({
+  const [formData, setFormData] = useState<any>({
     name: '',
     description: '',
     phoneNumber: '',
     website: '',
-    isActive: true
+    isActive: true,
+    email: ''
   });
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -35,14 +36,15 @@ export default function VendorForm({ initialData, onSubmit, onCancel }: VendorFo
         description: initialData.description,
         phoneNumber: initialData.phoneNumber,
         website: initialData.website,
-        isActive: initialData.isActive
+        isActive: initialData.isActive,
+        email: '' // Email not editable on update
       });
     }
   }, [initialData]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, checked, type } = e.target;
-    setFormData(prev => ({
+    setFormData((prev: any) => ({
       ...prev,
       [name]: type === 'checkbox' ? checked : value
     }));
@@ -72,6 +74,18 @@ export default function VendorForm({ initialData, onSubmit, onCancel }: VendorFo
       {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
 
       <Stack spacing={2}>
+        {!initialData && (
+          <TextField
+            label="Email (User Account)"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            required
+            fullWidth
+            type="email"
+            helperText="A user account will be created with this email and password 'Password123!'"
+          />
+        )}
         <TextField
           label="Name"
           name="name"

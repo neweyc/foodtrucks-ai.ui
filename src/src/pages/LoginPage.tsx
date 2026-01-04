@@ -16,8 +16,8 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const data = await login({ email, password });
-      localStorage.setItem('authToken', data.accessToken);
+      await login({ email, password });
+      // Cookie is handled automatically by browser
       
       const user = await getMe();
       if (user.vendorId) {

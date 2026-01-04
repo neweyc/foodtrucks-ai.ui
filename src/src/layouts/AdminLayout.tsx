@@ -15,14 +15,21 @@ import {
 } from '@mui/material';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import LogoutIcon from '@mui/icons-material/Logout';
+import PersonIcon from '@mui/icons-material/Person';
+
+import { logout } from '../api/client';
 
 const drawerWidth = 240;
 
 export default function AdminLayout() {
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    localStorage.removeItem('authToken');
+  const handleLogout = async () => {
+     try {
+        await logout();
+    } catch (e) {
+        console.error(e);
+    }
     navigate('/');
   };
 
@@ -61,6 +68,14 @@ export default function AdminLayout() {
                   <DashboardIcon /> 
                 </ListItemIcon>
                 <ListItemText primary="Vendors" />
+              </ListItemButton>
+            </ListItem>
+            <ListItem disablePadding>
+              <ListItemButton onClick={() => navigate('/admin/profile')}>
+                <ListItemIcon>
+                  <PersonIcon /> 
+                </ListItemIcon>
+                <ListItemText primary="Profile" />
               </ListItemButton>
             </ListItem>
           </List>

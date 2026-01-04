@@ -17,14 +17,20 @@ import DashboardIcon from '@mui/icons-material/Dashboard';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import LogoutIcon from '@mui/icons-material/Logout';
+import PersonIcon from '@mui/icons-material/Person';
+import { logout } from '../api/client';
 
 const drawerWidth = 240;
 
 export default function VendorLayout() {
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    localStorage.removeItem('authToken');
+  const handleLogout = async () => {
+    try {
+        await logout();
+    } catch (e) {
+        console.error(e);
+    }
     navigate('/');
   };
 
@@ -71,6 +77,14 @@ export default function VendorLayout() {
                   <ReceiptLongIcon />
                 </ListItemIcon>
                 <ListItemText primary="Orders" />
+              </ListItemButton>
+            </ListItem>
+            <ListItem disablePadding>
+              <ListItemButton onClick={() => navigate('/vendor/profile')}>
+                <ListItemIcon>
+                  <PersonIcon />
+                </ListItemIcon>
+                <ListItemText primary="Profile" />
               </ListItemButton>
             </ListItem>
           </List>

@@ -9,6 +9,7 @@ import {
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { getTruck, placeOrder } from '../../api/client';
 import type { Truck, MenuItem } from '../../api/client';
 
@@ -182,6 +183,14 @@ export default function CustomerTruckPage() {
             }}
         >
             <Container maxWidth="md">
+                <Button 
+                    startIcon={<ArrowBackIcon />} 
+                    color="inherit" 
+                    onClick={() => navigate('/')}
+                    sx={{ mb: 2, textTransform: 'none', fontWeight: 'bold' }}
+                >
+                    Back to Trucks
+                </Button>
                 <Typography variant="h2" component="h1" gutterBottom sx={{ fontWeight: 800 }}>
                     {truck.name}
                 </Typography>

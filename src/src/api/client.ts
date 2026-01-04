@@ -1,26 +1,16 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:5150'; // Confirmed current API port
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5150';
 
 const client = axios.create({
   baseURL: API_BASE_URL,
+  withCredentials: true, // Send Cookies
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
-// Request interceptor to add auth token if available
-client.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem('authToken');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => Promise.reject(error)
-);
-
+// Request interceptor removed (Bearer token not needed)
 
 export interface LoginRequest {
   email: string;
@@ -28,14 +18,25 @@ export interface LoginRequest {
 }
 
 export interface LoginResponse {
-  accessToken: string;
-  expiresIn: number;
-  refreshToken: string;
+  message: string;
 }
 
 export const login = async (credentials: LoginRequest): Promise<LoginResponse> => {
   const response = await client.post<LoginResponse>('/api/auth/login', credentials);
   return response.data;
+};
+
+export const logout = async (): Promise<void> => {
+  await client.post('/api/auth/logout', {});
+};
+
+export interface ChangePasswordRequest {
+  newPassword: string;
+  oldPassword: string;
+}
+
+export const changePassword = async (request: ChangePasswordRequest): Promise<void> => {
+   await client.post('/api/auth/manage/info', request);
 };
 
 export interface UserDto {
@@ -220,6 +221,7 @@ export interface CreateVendorRequest {
   description: string;
   phoneNumber: string;
   website: string;
+  email: string;
 }
 
 export interface UpdateVendorRequest {

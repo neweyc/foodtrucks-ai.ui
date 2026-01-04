@@ -12,9 +12,12 @@ import CreateTruckPage from './pages/vendor/CreateTruckPage';
 import EditTruckPage from './pages/vendor/EditTruckPage';
 import TruckMenuPage from './pages/vendor/TruckMenuPage';
 import VendorOrdersPage from './pages/vendor/VendorOrdersPage';
+import ProfilePage from './pages/vendor/ProfilePage';
 import CustomerTruckPage from './pages/public/CustomerTruckPage';
 import OrderTrackingPage from './pages/public/OrderTrackingPage';
 import HomePage from './pages/public/HomePage';
+
+import AdminProfilePage from './pages/admin/AdminProfilePage';
 
 import { ThemeProvider, CssBaseline } from '@mui/material';
 import theme from './theme';
@@ -40,6 +43,7 @@ function App() {
             <Route path="trucks/:truckId/edit" element={<EditTruckPage />} />
             <Route path="trucks/:truckId/menu" element={<TruckMenuPage />} />
             <Route path="orders" element={<VendorOrdersPage />} />
+            <Route path="profile" element={<ProfilePage />} />
           </Route>
 
           {/* Admin Routes */}
@@ -47,6 +51,7 @@ function App() {
           <Route path="/admin" element={<AdminLayout />}>
             <Route path="dashboard" element={<AdminDashboard />} />
             <Route path="vendors" element={<VendorsPage />} />
+            <Route path="profile" element={<AdminProfilePage />} />
           </Route>
 
           {/* Fallback */}
