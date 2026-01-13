@@ -181,6 +181,36 @@ export const placeOrder = async (order: PlaceOrderRequest): Promise<OrderResultD
   return response.data;
 };
 
+export interface CheckoutRequest {
+  truckId: number;
+  customerName: string;
+  customerPhone: string;
+  items: PlaceOrderItemDto[];
+}
+
+export interface CheckoutResponse {
+  url: string;
+}
+
+export const checkout = async (request: CheckoutRequest): Promise<CheckoutResponse> => {
+  const response = await client.post<CheckoutResponse>('/api/checkout', request);
+  return response.data;
+};
+
+export interface VerifyCheckoutRequest {
+  sessionId: string;
+}
+
+export interface VerifyCheckoutResponse {
+  orderId: number;
+  trackingCode: string;
+}
+
+export const verifyCheckout = async (request: VerifyCheckoutRequest): Promise<VerifyCheckoutResponse> => {
+  const response = await client.post<VerifyCheckoutResponse>('/api/checkout/verify', request);
+  return response.data;
+};
+
 export interface OrderItem {
   itemName: string;
   quantity: number;
@@ -189,6 +219,7 @@ export interface OrderItem {
 
 export interface Order {
   id: number;
+  truckId: number;
   customerName: string;
   customerPhone: string;
   totalAmount: number;
@@ -252,6 +283,11 @@ export const updateVendor = async (id: number, request: UpdateVendorRequest): Pr
 
 export const deleteVendor = async (id: number): Promise<void> => {
   await client.delete(`/api/vendors/${id}`);
+};
+
+export const getVendorOnboardingLink = async (vendorId: number): Promise<{ url: string }> => {
+  const response = await client.post<{ url: string }>(`/api/vendors/${vendorId}/onboarding`);
+  return response.data;
 };
 
 export default client;

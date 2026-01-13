@@ -10,8 +10,9 @@ import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { getTruck, placeOrder } from '../../api/client';
+import { getTruck, checkout } from '../../api/client';
 import type { Truck, MenuItem } from '../../api/client';
+import CircularProgress from '@mui/material/CircularProgress';
 
 // Cart Interface
 interface CartItem {
@@ -42,7 +43,7 @@ export default function CustomerTruckPage() {
   // Checkout Form
   const [customerName, setCustomerName] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
-  const [paymentToken, setPaymentToken] = useState('tok_visa'); // Mock token
+  const [isRedirecting, setIsRedirecting] = useState(false);
   const [orderSuccess, setOrderSuccess] = useState(false);
 
   useEffect(() => {
@@ -133,8 +134,9 @@ export default function CustomerTruckPage() {
   };
 
   const handlePlaceOrder = async () => {
-    if (!truck || !customerName || !customerPhone || !paymentToken) return;
+    if (!truck || !customerName || !customerPhone) return;
     
+    setIsRedirecting(true);
     try {
         const items = cartItems.map(i => ({
             menuItemId: i.menuItem.id,
@@ -143,21 +145,19 @@ export default function CustomerTruckPage() {
             optionIds: i.selectedOptions?.map(o => o.id)
         }));
 
-        const result = await placeOrder({
+        const result = await checkout({
             truckId: truck.id,
             customerName,
             customerPhone,
-            paymentToken,
             items
         });
 
-        setOrderSuccess(true);
-        setCartItems([]);
-        setIsCheckoutOpen(false);
-        navigate(`/order/${result.trackingCode}`);
+        // Redirect to Stripe
+        window.location.href = result.url;
     } catch (err) {
         console.error(err);
-        alert('Failed to place order. Please try again.');
+        alert('Failed to initiate checkout. Please try again.');
+        setIsRedirecting(false);
     }
   };
 
@@ -453,15 +453,9 @@ export default function CustomerTruckPage() {
                 
                 <Box>
                      <Typography variant="subtitle2" color="text.secondary" gutterBottom sx={{ mb: 1 }}>PAYMENT</Typography>
-                     <TextField 
-                        label="Card Token" 
-                        fullWidth 
-                        value={paymentToken} 
-                        onChange={e => setPaymentToken(e.target.value)} 
-                        helperText={<span>Use <b>tok_visa</b> for testing</span>}
-                        variant="outlined"
-                        InputProps={{ readOnly: false }}
-                    />
+                     <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                        You will be redirected to Stripe to securely complete your payment.
+                     </Typography>
                 </Box>
             </Box>
         </DialogContent>
@@ -471,10 +465,10 @@ export default function CustomerTruckPage() {
                 onClick={handlePlaceOrder} 
                 variant="contained" 
                 size="large"
-                disabled={!customerName || !customerPhone}
+                disabled={!customerName || !customerPhone || isRedirecting}
                 sx={{ px: 4 }}
             >
-                Pay & Place Order
+                {isRedirecting ? <CircularProgress size={24} color="inherit" /> : 'Proceed to Payment'}
             </Button>
         </DialogActions>
       </Dialog>

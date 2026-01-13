@@ -18,20 +18,21 @@ import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import LogoutIcon from '@mui/icons-material/Logout';
 import PersonIcon from '@mui/icons-material/Person';
-import { logout } from '../api/client';
+import { useAuth } from '../contexts/AuthContext';
 
 const drawerWidth = 240;
 
 export default function VendorLayout() {
   const navigate = useNavigate();
+  const { logout } = useAuth();
 
   const handleLogout = async () => {
     try {
         await logout();
+        navigate('/login');
     } catch (e) {
         console.error(e);
     }
-    navigate('/');
   };
 
   return (

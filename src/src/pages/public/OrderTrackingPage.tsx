@@ -69,7 +69,7 @@ export default function OrderTrackingPage() {
             </Stepper>
 
             <Box sx={{ bgcolor: 'grey.50', p: 3, borderRadius: 2, mb: 4 }}>
-                 <Typography variant="h6" gutterBottom>Itmes</Typography>
+                 <Typography variant="h6" gutterBottom>Items</Typography>
                  {order.items.map((item, index) => (
                      <Box key={index} sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
                          <Typography>
@@ -93,7 +93,7 @@ export default function OrderTrackingPage() {
             
             {order.status === 'Completed' && (
                  <Box sx={{ textAlign: 'center', mt: 4 }}>
-                    <Button variant="contained" component={Link} to={`/trucks/${order.id}`}> {/* Warning: TruckId is not directly on Order DTO in client yet, assuming it might be needed or just back to home */}
+                    <Button variant="contained" component={Link} to={`/trucks/${order.truckId}`}>
                         Order Again
                     </Button>
                  </Box>

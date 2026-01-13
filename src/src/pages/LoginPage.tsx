@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Box, Card, CardContent, Typography, TextField, Button, Alert } from '@mui/material';
-import { login, getMe } from '../api/client';
+import { useAuth } from '../contexts/AuthContext';
 
 export default function LoginPage() {
   const navigate = useNavigate();
+  const { login } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -16,9 +17,9 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      await login({ email, password });
-      // Cookie is handled automatically by browser
-      
+      await login(email, password);
+      // AuthContext login updates user state, then check user role via getMe
+      const { getMe } = await import('../api/client');
       const user = await getMe();
       if (user.vendorId) {
         navigate('/vendor/dashboard');

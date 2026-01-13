@@ -16,21 +16,21 @@ import {
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import LogoutIcon from '@mui/icons-material/Logout';
 import PersonIcon from '@mui/icons-material/Person';
-
-import { logout } from '../api/client';
+import { useAuth } from '../contexts/AuthContext';
 
 const drawerWidth = 240;
 
 export default function AdminLayout() {
   const navigate = useNavigate();
+  const { logout } = useAuth();
 
   const handleLogout = async () => {
      try {
         await logout();
+        navigate('/login');
     } catch (e) {
         console.error(e);
     }
-    navigate('/');
   };
 
   return (

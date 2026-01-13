@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { 
   Box, Typography, TextField, Button, Alert, Paper, Tabs, Tab, CircularProgress 
 } from '@mui/material';
-import { getMe, getVendor, updateVendor, changePassword } from '../../api/client';
+import { getMe, getVendor, updateVendor, changePassword, getVendorOnboardingLink } from '../../api/client';
 import type { Vendor } from '../../api/client';
 
 export default function ProfilePage() {
@@ -22,6 +22,9 @@ export default function ProfilePage() {
     const [oldPassword, setOldPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
+    
+    // Stripe State
+    const [stripeAccountId, setStripeAccountId] = useState<string | null>(null);
 
     useEffect(() => {
         loadProfile();
@@ -37,6 +40,8 @@ export default function ProfilePage() {
                 setDescription(v.description);
                 setPhoneNumber(v.phoneNumber);
                 setWebsite(v.website);
+                // @ts-ignore
+                setStripeAccountId(v.stripeAccountId);
             }
         } catch (err) {
             console.error(err);
@@ -84,6 +89,17 @@ export default function ProfilePage() {
         }
     };
 
+    const handleConnectStripe = async () => {
+        if (!vendor) return;
+        try {
+            const result = await getVendorOnboardingLink(vendor.id);
+            window.location.href = result.url;
+        } catch (err) {
+            console.error(err);
+            setError('Failed to initiate Stripe connection.');
+        }
+    };
+
     if (loading) return <CircularProgress sx={{ display: 'block', mx: 'auto', mt: 4 }} />;
 
     return (
@@ -96,6 +112,7 @@ export default function ProfilePage() {
             <Tabs value={tabIndex} onChange={(_, v) => setTabIndex(v)} sx={{ mb: 3 }}>
                 <Tab label="Business Profile" />
                 <Tab label="Security" />
+                <Tab label="Payouts" />
             </Tabs>
 
             {tabIndex === 0 && (
@@ -179,6 +196,35 @@ export default function ProfilePage() {
                             Update Password
                         </Button>
                     </Box>
+                </Paper>
+            )}
+
+            {tabIndex === 2 && (
+                <Paper sx={{ p: 4, maxWidth: 600 }}>
+                    <Typography variant="h6" gutterBottom>Payout Settings</Typography>
+                    <Typography paragraph color="text.secondary">
+                        Connect your bank account to receive payouts directly from orders.
+                    </Typography>
+                    
+                    {stripeAccountId ? (
+                        <Alert severity="success">
+                            Your account is connected to Stripe! You will receive payouts automatically.
+                        </Alert>
+                    ) : (
+                        <Box>
+                             <Alert severity="warning" sx={{ mb: 3 }}>
+                                Payouts are not set up. You cannot receive funds until you connect a bank account.
+                            </Alert>
+                            <Button 
+                                variant="contained" 
+                                color="primary" 
+                                size="large" 
+                                onClick={handleConnectStripe}
+                            >
+                                Connect with Stripe
+                            </Button>
+                        </Box>
+                    )}
                 </Paper>
             )}
         </Box>
